@@ -30,6 +30,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -525,6 +526,7 @@ public class MultiObjectRunning {
 		tldriver.set(driverInstance);
 	}
 
+	@AfterClass()
 	public static void quitDriver() {
 		if (tldriver.get() != null) {
 			tldriver.get().quit();
