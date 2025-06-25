@@ -326,7 +326,7 @@ public class MultiObjectRunning {
 
 	@Description("To change the status active-inactive")
 	@Test(enabled = true,priority = 3,dataProvider = "multiobjectRunningDataProvider")
-	public void changestatus(Map<String, Object> filterData) throws InterruptedException {
+	public void status(Map<String, Object> filterData) throws InterruptedException {
 		try {
 			filterData = convertKeysToCamelCase(filterData);
 			clickOnStatus((String) filterData.get("imeiNo"));

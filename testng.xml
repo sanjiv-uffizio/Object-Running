@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Suite">
-	<test thread-count="5" name="Test">
-	 <classes>
+<suite name="Object Running">
+  <test name="Object Running">
+    <classes>
       <class name="projects.trakzee.testCases.web.multiobjectRunning.MultiObjectRunning">
-      
         <methods>
-        
-           <include name="add"/>
-        <!--  
-          <include name="refresh"/>
-          
-           <include name="changestatus"/>
-           
-          <include name="remove"/>-->
-          
+          <include name="remove"/>
         </methods>
       </class>
     </classes>
-	</test> <!--
-	Test -->
-</suite> <!--
-Suite -->
+  </test>
+</suite>
