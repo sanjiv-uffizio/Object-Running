@@ -40,6 +40,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Description;
 
 public class MultiObjectRunning {
+	static {
+		System.setProperty("headless", "true");	}
 
 	private static WebDriver driver;
 	//xpath
@@ -544,17 +546,17 @@ public class MultiObjectRunning {
 
 	@BeforeClass()
 	public void setUpWebDriverInDebuggerMode() {
-		System.out.println("Setting up WebDriver in debugger mode...");
 		// Ensure the correct version of ChromeDriver is used
 		WebDriverManager.chromedriver().driverVersion("latest").setup();
 
-		if (!Boolean.parseBoolean(System.getProperty("headless", "false"))) {
-			startChromeIfNotRunning(9222, "/home/uffizio/ChromeDebuggerDataGMail",
-					"Profile 1");
-		}
+//		if (!Boolean.parseBoolean(System.getProperty("headless", "false"))) {
+//			System.out.println("Setting up WebDriver in debugger mode...");
+//			startChromeIfNotRunning(9222, "/home/uffizio/ChromeDebuggerDataGMail",
+//					"Profile 1");
+//		}
 		try {
 			// Initialize WebDriver with the given Chrome options
-			driver = new ChromeDriver(customizedChromeOptions(true, false, true, false, 9222));
+			driver = new ChromeDriver(customizedChromeOptions(true, true, true, false, 9222));
 			setWebDriver(driver);
 		} catch (Exception e) {
 			// Capture any errors during initialization and print the stack trace
