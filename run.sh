@@ -8,7 +8,7 @@ if [ -z "$METHOD" ]; then
   exit 1
 fi
 
-cd /home/uffizio/eclipse-workspace/ObjectRunning || exit
+cd "/home/uffizio/eclipse-workspace/ObjectRunning" || exit
 
 # Generate dynamic TestNG XML file
 cat <<EOF > testng.xml

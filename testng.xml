@@ -5,7 +5,7 @@
     <classes>
       <class name="projects.trakzee.testCases.web.multiobjectRunning.MultiObjectRunning">
         <methods>
-          <include name="add"/>
+          <include name="status"/>
         </methods>
       </class>
     </classes>
