@@ -29,6 +29,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -41,8 +42,11 @@ import io.qameta.allure.Description;
 
 public class MultiObjectRunning {
 	static {
-		System.setProperty("headless", "true");	}
-
+		System.setProperty("headless", "true");	
+		}
+	String objectFileFromTestXMLFile="";
+	String pathFileFromTestXMLFile="";
+	
 	private static WebDriver driver;
 	//xpath
 	public static final By alreadyPresentIndexCount = By.xpath("//tbody[@id='configurations']//tr//td[1]");
@@ -299,20 +303,26 @@ public class MultiObjectRunning {
 			setIMEINo((String) filterData.get("imeiNo"));
 			setServerIP((String) filterData.get("serverIp"));
 			setTimeInterval((String) filterData.get("timeInterval"));
-			String fileName = "path";
+			
+			String filePath= "";
 
-			final String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test"
-					+ File.separator + "java" + File.separator + "projects" + File.separator +"trakzee" + File.separator + "testCases"+ File.separator + "web" + File.separator +  "multiobjectRunning"
-					+ File.separator + fileName + ".csv";
-			System.out.println("XLS File path: " + filePath);
-
+			if(!pathFileFromTestXMLFile.isEmpty()) {
+				filePath = pathFileFromTestXMLFile;
+			}else {
+				String fileName = "path";
+				filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test"
+						+ File.separator + "java" + File.separator + "projects" + File.separator +"trakzee" + File.separator + "testCases"+ File.separator + "web" + File.separator +  "multiobjectRunning"
+						+ File.separator + fileName + ".csv";
+				System.out.println("XLS File path: " + filePath);
+			}
+			
 			setCSVFile(filePath);
 			clickOnSubmit();
 			getWebDriver().navigate().refresh();
 			Thread.sleep(200);
 			clickOnStatus(); //active
 		} catch (Exception e) {
-
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -322,7 +332,7 @@ public class MultiObjectRunning {
 		try {
 			getWebDriver().navigate().refresh();
 		} catch (Exception e) {
-
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -333,7 +343,7 @@ public class MultiObjectRunning {
 			filterData = convertKeysToCamelCase(filterData);
 			clickOnStatus((String) filterData.get("imeiNo"));
 		} catch (Exception e) {
-
+			System.out.println(e.getMessage());
 		}
 	}
 	@Description("To remove the added vehicle from the entry")
@@ -343,7 +353,7 @@ public class MultiObjectRunning {
 			filterData = convertKeysToCamelCase(filterData);
 			clickOnRemove((String) filterData.get("imeiNo"));
 		} catch (Exception e) {
-
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -353,7 +363,7 @@ public class MultiObjectRunning {
 		try {
 			clickOnStatus(Integer.parseInt(lastIndex()));
 		} catch (Exception e) {
-			
+			System.out.println(e.getMessage());
 		}
 	}
 	
@@ -366,6 +376,7 @@ public class MultiObjectRunning {
 			Thread.sleep(1000);
 			clickOnRemoveBulkUpdate(Integer.parseInt(lastIndex()));
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -381,11 +392,18 @@ public class MultiObjectRunning {
 
 		System.out.println("Found description as sheet name: " + sheetName);
 
-		String fileName = "Object";
-		String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test"
-				+ File.separator + "java" + File.separator + "projects" + File.separator +"trakzee" + File.separator + "testCases"+ File.separator + "web" +File.separator + "multiobjectRunning"
-				+ File.separator + fileName + ".xlsx";
-		System.out.println("XLS File path: " + filePath);
+		String filePath="";
+		
+		if(!objectFileFromTestXMLFile.isEmpty()) {
+			filePath=objectFileFromTestXMLFile;
+		}else {
+			String fileName = "Object";
+			filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test"
+					+ File.separator + "java" + File.separator + "projects" + File.separator +"trakzee" + File.separator + "testCases"+ File.separator + "web" +File.separator + "multiobjectRunning"
+					+ File.separator + fileName + ".xlsx";
+			System.out.println("XLS File path: " + filePath);
+		}
+		
 		List<Map<String, Object>> rawData = readExcelFileAndCatchDataUsingColumnNameWithSkipDataSet(filePath, sheetName);
 
 		// Convert List<Map<String, Object>> to Object[][]
@@ -545,7 +563,7 @@ public class MultiObjectRunning {
 	}
 
 	@BeforeClass()
-	public void setUpWebDriverInDebuggerMode() {
+	public void setUpWebDriverInDebuggerMode(ITestContext iTestContext) {
 		// Ensure the correct version of ChromeDriver is used
 		WebDriverManager.chromedriver().driverVersion("latest").setup();
 
@@ -556,15 +574,20 @@ public class MultiObjectRunning {
 //		}
 		try {
 			// Initialize WebDriver with the given Chrome options
-			driver = new ChromeDriver(customizedChromeOptions(true, true, true, false, 9222));
+			driver = new ChromeDriver(customizedChromeOptions(true,true, true, true, false, 9222));
 			setWebDriver(driver);
 		} catch (Exception e) {
 			// Capture any errors during initialization and print the stack trace
 			System.err.println("Failed to initialize WebDriver: " + e.getMessage());
 		}
 		
-		getWebDriver().get("http://192.168.3.177:5000");
-		//getWebDriver().manage().window().fullscreen();
+		getWebDriver().get("http://192.168.3.177:5000"); //Local
+		//getWebDriver().get("http://13.234.126.218:5757"); //Live
+		
+		objectFileFromTestXMLFile = iTestContext.getCurrentXmlTest().getParameter("objectfile");
+		pathFileFromTestXMLFile = iTestContext.getCurrentXmlTest().getParameter("pathfile");
+		System.out.println("objectFileFromTestXMLFile: "+objectFileFromTestXMLFile);
+		System.out.println("pathFileFromTestXMLFile: "+pathFileFromTestXMLFile);
 
 	}
 	
@@ -602,12 +625,22 @@ public class MultiObjectRunning {
 		}
 	}
 
-	private ChromeOptions customizedChromeOptions(boolean blockAdsAndNotifications, boolean headlessBrowsing,
+	private ChromeOptions customizedChromeOptions(boolean acceptInsecure,boolean blockAdsAndNotifications, boolean headlessBrowsing,
 			boolean incognitoMode, boolean debuggerMode, int debuggerPort) {
 
 		// TO INITIALIZE CHROME OPTIONS
 		ChromeOptions options = new ChromeOptions(); // Use the correct class name and variable
 
+		if(acceptInsecure) {
+			options.setAcceptInsecureCerts(true); // This is the key
+			options.addArguments("--ignore-certificate-errors");
+	        options.addArguments("--allow-insecure-localhost");
+	        options.addArguments("--disable-web-security");
+	        options.addArguments("--disable-gpu");
+	        options.addArguments("--no-sandbox");
+	        options.addArguments("--disable-dev-shm-usage");
+		}
+		
 		if (blockAdsAndNotifications) {
 			// Disable pop-ups and intrusive ads
 			options.addArguments("--disable-popup-blocking");

@@ -2,10 +2,12 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Object Running">
   <test name="Object Running">
+   <parameter name="objectfile" value="/home/uffizio/Desktop/Object.xlsx"></parameter>
+       <parameter name="pathfile" value="/home/uffizio/Desktop/path.csv"></parameter>
     <classes>
       <class name="projects.trakzee.testCases.web.multiobjectRunning.MultiObjectRunning">
         <methods>
-          <include name="status"/>
+          <include name="add"/>
         </methods>
       </class>
     </classes>

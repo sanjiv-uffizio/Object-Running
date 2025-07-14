@@ -2,9 +2,11 @@
 
 # Get the method name from terminal input
 METHOD=$1
+OBJECTFILE=$2
+PATHFILE=$3
 
 if [ -z "$METHOD" ]; then
-  echo "❌ Please provide a method name (e.g., add, refresh)"
+  echo "❌ Please provide a method name (e.g., add, status, remove, refresh)"
   exit 1
 fi
 
@@ -16,8 +18,12 @@ cat <<EOF > testng.xml
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Object Running">
   <test name="Object Running">
-    <classes>
+   <parameter name="objectfile" value="$OBJECTFILE"></parameter>
+       <parameter name="pathfile" value="$PATHFILE"></parameter>
+       
+    <classes>	
       <class name="projects.trakzee.testCases.web.multiobjectRunning.MultiObjectRunning">
+     
         <methods>
           <include name="$METHOD"/>
         </methods>
