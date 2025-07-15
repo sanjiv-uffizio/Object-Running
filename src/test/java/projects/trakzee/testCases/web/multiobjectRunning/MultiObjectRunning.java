@@ -42,10 +42,11 @@ import io.qameta.allure.Description;
 
 public class MultiObjectRunning {
 	static {
-		System.setProperty("headless", "true");	
+		System.setProperty("headless", "false");	
 		}
 	String objectFileFromTestXMLFile="";
 	String pathFileFromTestXMLFile="";
+	String serverFromXMLFile = "";
 	
 	private static WebDriver driver;
 	//xpath
@@ -394,7 +395,7 @@ public class MultiObjectRunning {
 
 		String filePath="";
 		
-		if(!objectFileFromTestXMLFile.isEmpty()) {
+		if(!(objectFileFromTestXMLFile != null && objectFileFromTestXMLFile.isEmpty())) {
 			filePath=objectFileFromTestXMLFile;
 		}else {
 			String fileName = "Object";
@@ -581,8 +582,18 @@ public class MultiObjectRunning {
 			System.err.println("Failed to initialize WebDriver: " + e.getMessage());
 		}
 		
-		getWebDriver().get("http://192.168.3.177:5000"); //Local
-		//getWebDriver().get("http://13.234.126.218:5757"); //Live
+		serverFromXMLFile = iTestContext.getCurrentXmlTest().getParameter("server");
+	
+		if(serverFromXMLFile != null && serverFromXMLFile.equalsIgnoreCase("live")) {
+			getWebDriver().get("http://13.234.126.218:5757"); //Live
+		}else if(serverFromXMLFile != null && serverFromXMLFile.equalsIgnoreCase("local")){
+			getWebDriver().get("http://192.168.3.177:5000"); //Local
+		}else {
+			getWebDriver().get("http://192.168.3.177:5000"); //Local
+		}
+			
+	
+		
 		
 		objectFileFromTestXMLFile = iTestContext.getCurrentXmlTest().getParameter("objectfile");
 		pathFileFromTestXMLFile = iTestContext.getCurrentXmlTest().getParameter("pathfile");
@@ -601,8 +612,19 @@ public class MultiObjectRunning {
 	
 	private void startChromeWithRemoteDebugging(int port, String userBrowserStoreDataDirectory, String userProfile) {
 		try {
-			String chromePath = "chrome.exe"; // Path to Chrome executable; ensure it's in the system PATH or provide
-												// full path
+			String chromePath = "";
+			String os = System.getProperty("os.name").toLowerCase();
+			System.out.println("Detected OS: " + System.getProperty("os.name"));
+
+			if (os.contains("win")) {
+			    chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+			} else if (os.contains("nux")) {
+			    chromePath = "/usr/bin/google-chrome";
+			} else if (os.contains("mac")) {
+			    chromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+			}
+
+
 			String portArg = "--remote-debugging-port=" + port;
 			String userDataDirArg = "--user-data-dir=" + userBrowserStoreDataDirectory;
 			String profileDirArg = "--profile-directory=" + userProfile; // Add profile-directory
@@ -639,6 +661,11 @@ public class MultiObjectRunning {
 	        options.addArguments("--disable-gpu");
 	        options.addArguments("--no-sandbox");
 	        options.addArguments("--disable-dev-shm-usage");
+	     // Optional: to suppress HTTPS warning for localhost-style IPs
+	        options.addArguments("--user-data-dir=/tmp/chromeprofile");
+	        options.addArguments("--test-type");
+	        options.addArguments("--unsafely-treat-insecure-origin-as-secure=http://13.234.126.218:5757");
+
 		}
 		
 		if (blockAdsAndNotifications) {

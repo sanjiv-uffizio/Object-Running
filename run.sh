@@ -1,9 +1,12 @@
 #!/bin/bash
 
 # Get the method name from terminal input
+echo "First argument is for: Method, Seconds is for: Object file, Third is for: Path file, Fourth is for: Server"
+
 METHOD=$1
 OBJECTFILE=$2
 PATHFILE=$3
+SERVER=$4
 
 if [ -z "$METHOD" ]; then
   echo "❌ Please provide a method name (e.g., add, status, remove, refresh)"
@@ -20,6 +23,7 @@ cat <<EOF > testng.xml
   <test name="Object Running">
    <parameter name="objectfile" value="$OBJECTFILE"></parameter>
        <parameter name="pathfile" value="$PATHFILE"></parameter>
+       <parameter name="server" value="$SERVER"></parameter>
        
     <classes>	
       <class name="projects.trakzee.testCases.web.multiobjectRunning.MultiObjectRunning">

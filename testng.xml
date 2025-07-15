@@ -4,10 +4,13 @@
   <test name="Object Running">
    <parameter name="objectfile" value="/home/uffizio/Desktop/Object.xlsx"></parameter>
        <parameter name="pathfile" value="/home/uffizio/Desktop/path.csv"></parameter>
-    <classes>
+       <parameter name="server" value="live"></parameter>
+       
+    <classes>	
       <class name="projects.trakzee.testCases.web.multiobjectRunning.MultiObjectRunning">
+     
         <methods>
-          <include name="add"/>
+          <include name="remove"/>
         </methods>
       </class>
     </classes>
