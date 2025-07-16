@@ -44,9 +44,9 @@ public class MultiObjectRunning {
 	static {
 		System.setProperty("headless", "false");	
 		}
-	String objectFileFromTestXMLFile="";
-	String pathFileFromTestXMLFile="";
-	String serverFromXMLFile = "";
+	String objectFileFromTestXMLFile;
+	String pathFileFromTestXMLFile;
+	String serverFromXMLFile;
 	
 	private static WebDriver driver;
 	//xpath
@@ -310,7 +310,7 @@ public class MultiObjectRunning {
 			if(!pathFileFromTestXMLFile.isEmpty()) {
 				filePath = pathFileFromTestXMLFile;
 			}else {
-				String fileName = "path";
+				String fileName = "Path";
 				filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test"
 						+ File.separator + "java" + File.separator + "projects" + File.separator +"trakzee" + File.separator + "testCases"+ File.separator + "web" + File.separator +  "multiobjectRunning"
 						+ File.separator + fileName + ".csv";
@@ -405,6 +405,7 @@ public class MultiObjectRunning {
 			System.out.println("XLS File path: " + filePath);
 		}
 		
+		System.out.println("File Path: "+filePath);
 		List<Map<String, Object>> rawData = readExcelFileAndCatchDataUsingColumnNameWithSkipDataSet(filePath, sheetName);
 
 		// Convert List<Map<String, Object>> to Object[][]
@@ -582,23 +583,47 @@ public class MultiObjectRunning {
 			System.err.println("Failed to initialize WebDriver: " + e.getMessage());
 		}
 		
+		StoreValues store = StoreValues.load();
+		store.printAll();
+
+		// --- Server Handling ---
 		serverFromXMLFile = iTestContext.getCurrentXmlTest().getParameter("server");
-	
-		if(serverFromXMLFile != null && serverFromXMLFile.equalsIgnoreCase("live")) {
-			getWebDriver().get("http://13.234.126.218:5757"); //Live
-		}else if(serverFromXMLFile != null && serverFromXMLFile.equalsIgnoreCase("local")){
-			getWebDriver().get("http://192.168.3.177:5000"); //Local
-		}else {
-			getWebDriver().get("http://192.168.3.177:5000"); //Local
+		if (serverFromXMLFile != null && !serverFromXMLFile.isEmpty()) {
+		    store.set("server", serverFromXMLFile);
+		    System.out.println("🔐 Saved new server value: " + serverFromXMLFile);
+		} else {
+		    serverFromXMLFile = store.get("server");
 		}
-			
-	
-		
-		
+
+		// Navigate to server URL
+		if (serverFromXMLFile != null && serverFromXMLFile.equalsIgnoreCase("live")) {
+		    getWebDriver().get("http://13.234.126.218:5757"); // Live
+		} else if (serverFromXMLFile != null && serverFromXMLFile.equalsIgnoreCase("local")) {
+		    getWebDriver().get("http://192.168.3.177:5000"); // Local
+		}
+
+		// --- Object File Handling ---
 		objectFileFromTestXMLFile = iTestContext.getCurrentXmlTest().getParameter("objectfile");
+		if (objectFileFromTestXMLFile != null && !objectFileFromTestXMLFile.isEmpty()) {
+		    store.set("objectfile", objectFileFromTestXMLFile);
+		    System.out.println("🔐 Saved new object file path value: " + objectFileFromTestXMLFile);
+		} else {
+		    objectFileFromTestXMLFile = store.get("objectfile");
+		}
+
+		// --- Path File Handling ---
 		pathFileFromTestXMLFile = iTestContext.getCurrentXmlTest().getParameter("pathfile");
-		System.out.println("objectFileFromTestXMLFile: "+objectFileFromTestXMLFile);
-		System.out.println("pathFileFromTestXMLFile: "+pathFileFromTestXMLFile);
+		if (pathFileFromTestXMLFile != null && !pathFileFromTestXMLFile.isEmpty()) {
+		    store.set("pathfile", pathFileFromTestXMLFile);
+		    System.out.println("🔐 Saved new path file value: " + pathFileFromTestXMLFile);
+		} else {
+		    pathFileFromTestXMLFile = store.get("pathfile");
+		}
+
+		// --- Summary Logs ---
+		System.out.println("✅ Selected server: " + serverFromXMLFile);
+		System.out.println("✅ Selected object file: " + objectFileFromTestXMLFile);
+		System.out.println("✅ Selected path file: " + pathFileFromTestXMLFile);
 
 	}
 	
